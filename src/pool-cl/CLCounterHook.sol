@@ -92,21 +92,13 @@ contract CLCounterHook is CLBaseHook {
         afterSwapCount[key.toId()]++;
         console2.log("sender", sender);
 
-        vault.settle(key.currency0);
-
-
         console2.log("unsettled deltas", vault.currencyDelta(sender, key.currency0));
         console2.log("unsettled deltas", vault.currencyDelta(address(this), key.currency0));
         
        
         if(delta.amount0() > 0 || delta.amount1() >0) { //if delta positive (pool owes amount to sender, then transfer hypARB to sender on base)
+            //vault.take(key.currency0, address(this), uint256(uint128(delta.amount0())));
            
-            
-
-            vault.take(key.currency0, address(this), uint256(uint128(delta.amount0())));
-           
-
-
             address ARB = 0x912CE59144191C1204E64559FE8253a0e49E6548; //arb token address
             address hypARB = 0xb52aE03f248f4D94f6DcC4A5Dc6d57184B08076C; //hyper ARB router address
            
@@ -122,10 +114,14 @@ contract CLCounterHook is CLBaseHook {
             bytes32 padded = bytes32(uint256(uint160(addr))); 
 
             uint32 _destination = 8453; //base chain id
-            HypERC20(hypARB).transferRemote(_destination, padded,1 wei);
+            HypERC20(hypARB).transferRemote(_destination, padded,0 wei);
         }
+
+            console2.log("unsettled deltas", vault.currencyDelta(sender, key.currency0));
+            console2.log("unsettled deltas", vault.currencyDelta(address(this), key.currency0));
       
         
+            //vault.settle(key.currency0);
 
 
         return this.afterSwap.selector;
