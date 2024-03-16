@@ -25,6 +25,7 @@ import {IMailbox} from "@hyperlane/interfaces/IMailbox.sol";
 import {HypERC20} from "@hyperlane-contracts/typescript/token/contracts/HypERC20.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {Currency} from "@pancakeswap/v4-core/src/types/Currency.sol";
+import { console2 } from "forge-std/console2.sol";
 
 
 
