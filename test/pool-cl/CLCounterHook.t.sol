@@ -12,6 +12,7 @@ import {CLTestUtils} from "./utils/CLTestUtils.sol";
 import {CLPoolParametersHelper} from "@pancakeswap/v4-core/src/pool-cl/libraries/CLPoolParametersHelper.sol";
 import {PoolIdLibrary} from "@pancakeswap/v4-core/src/types/PoolId.sol";
 import {ICLSwapRouterBase} from "@pancakeswap/v4-periphery/src/pool-cl/interfaces/ICLSwapRouterBase.sol";
+import { console2 } from "forge-std/console2.sol";
 
 contract CLCounterHookTest is Test, CLTestUtils {
     using PoolIdLibrary for PoolKey;
@@ -45,23 +46,42 @@ contract CLCounterHookTest is Test, CLTestUtils {
         assertEq(counterHook.beforeAddLiquidityCount(key.toId()), 0);
         assertEq(counterHook.afterAddLiquidityCount(key.toId()), 0);
 
-        MockERC20(Currency.unwrap(currency0)).mint(address(this), 1 ether);
-        MockERC20(Currency.unwrap(currency1)).mint(address(this), 1 ether);
+        //MockERC20(Currency.unwrap(currency0)).mint(address(this), 1 ether);
+        //MockERC20(Currency.unwrap(currency1)).mint(address(this), 1 ether);
+
+        _mintTokens(2 ether);
         addLiquidity(key, 1 ether, 1 ether, -60, 60);
 
         assertEq(counterHook.beforeAddLiquidityCount(key.toId()), 1);
         assertEq(counterHook.afterAddLiquidityCount(key.toId()), 1);
     }
 
+    //helper function to mint tokens
+    function _mintTokens(uint256 amount) internal{
+       
+        address hypARB = 0xC4ed0A9Ea70d5bCC69f748547650d32cC219D882; //hyperlane USDC wrapper address on arbitrum / base
+        address USDC = 0x86E721b43d4ECFa71119Dd38c0f938A75Fdb57B3; //usdc address on arbitrum
+        
+        //mint Aeth and Ausdc by depositing into pool
+        deal(hypARB, address(this), amount);
+        deal(USDC, address(this), amount);
+
+    
+    }
+
     function testSwapCallback() public {
-        MockERC20(Currency.unwrap(currency0)).mint(address(this), 1 ether);
-        MockERC20(Currency.unwrap(currency1)).mint(address(this), 1 ether);
+        console2.log("tokenA address", Currency.unwrap(currency0));
+        console2.log("tokenB address", Currency.unwrap(currency1));
+        
+        //MockERC20(Currency.unwrap(currency0)).mint(address(this), 1 ether);
+        //MockERC20(Currency.unwrap(currency1)).mint(address(this), 1 ether);
+        _mintTokens(2 ether);
         addLiquidity(key, 1 ether, 1 ether, -60, 60);
 
         assertEq(counterHook.beforeSwapCount(key.toId()), 0);
         assertEq(counterHook.afterSwapCount(key.toId()), 0);
 
-        MockERC20(Currency.unwrap(currency0)).mint(address(this), 0.1 ether);
+        //MockERC20(Currency.unwrap(currency0)).mint(address(this), 0.1 ether);
         swapRouter.exactInputSingle(
             ICLSwapRouterBase.V4CLExactInputSingleParams({
                 poolKey: key,

@@ -12,6 +12,7 @@ import {CLSwapRouter} from "@pancakeswap/v4-periphery/src/pool-cl/CLSwapRouter.s
 import {NonfungiblePositionManager} from "@pancakeswap/v4-periphery/src/pool-cl/NonfungiblePositionManager.sol";
 import {INonfungiblePositionManager} from
     "@pancakeswap/v4-periphery/src/pool-cl/interfaces/INonfungiblePositionManager.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract CLTestUtils {
     Vault vault;
@@ -27,8 +28,15 @@ contract CLTestUtils {
         nfp = new NonfungiblePositionManager(vault, poolManager, address(0), address(0));
         swapRouter = new CLSwapRouter(vault, poolManager, address(0));
 
-        MockERC20 token0 = new MockERC20("token0", "T0", 18);
-        MockERC20 token1 = new MockERC20("token1", "T1", 18);
+
+        address hypARB = 0xC4ed0A9Ea70d5bCC69f748547650d32cC219D882; //ARb token Implementation (not proxy)
+        address USDC = 0x86E721b43d4ECFa71119Dd38c0f938A75Fdb57B3; //usdc address on arbitrum
+        /*
+        IERC20 token0 =  IERC20(hypARB);  
+        IERC20 token1 =  IERC20(USDC);
+    */
+        MockERC20 token0 = MockERC20(hypARB);
+        MockERC20 token1 = MockERC20(USDC);
 
         address[2] memory approvalAddress = [address(nfp), address(swapRouter)];
         for (uint256 i; i < approvalAddress.length; i++) {
@@ -37,6 +45,18 @@ contract CLTestUtils {
         }
 
         return SortTokens.sort(token0, token1);
+    }
+
+    function sort(IERC20 tokenA, IERC20 tokenB)
+        internal
+        pure
+        returns (Currency _currency0, Currency _currency1)
+    {
+        if (address(tokenA) < address(tokenB)) {
+            (_currency0, _currency1) = (Currency.wrap(address(tokenA)), Currency.wrap(address(tokenB)));
+        } else {
+            (_currency0, _currency1) = (Currency.wrap(address(tokenB)), Currency.wrap(address(tokenA)));
+        }
     }
 
     function addLiquidity(PoolKey memory key, uint256 amount0, uint256 amount1, int24 tickLower, int24 tickUpper)
