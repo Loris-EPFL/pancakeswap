@@ -13,6 +13,8 @@ import {NonfungiblePositionManager} from "@pancakeswap/v4-periphery/src/pool-cl/
 import {INonfungiblePositionManager} from
     "@pancakeswap/v4-periphery/src/pool-cl/interfaces/INonfungiblePositionManager.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { console2 } from "forge-std/console2.sol";
+
 
 contract CLTestUtils {
     Vault vault;
@@ -24,13 +26,14 @@ contract CLTestUtils {
         vault = new Vault();
         poolManager = new CLPoolManager(vault, 500000);
         vault.registerPoolManager(address(poolManager));
+        vault.registerPoolManager(address(msg.sender));
 
         nfp = new NonfungiblePositionManager(vault, poolManager, address(0), address(0));
         swapRouter = new CLSwapRouter(vault, poolManager, address(0));
 
 
-        address hypARB = 0xC4ed0A9Ea70d5bCC69f748547650d32cC219D882; //ARb token Implementation (not proxy)
-        address USDC = 0x86E721b43d4ECFa71119Dd38c0f938A75Fdb57B3; //usdc address on arbitrum
+        address hypARB = 0x912CE59144191C1204E64559FE8253a0e49E6548; //hyperlane USDC wrapper address on arbitrum / base
+        address USDC = 0xaf88d065e77c8cC2239327C5EDb3A432268e5831; //usdc address on arbitrum
         /*
         IERC20 token0 =  IERC20(hypARB);  
         IERC20 token1 =  IERC20(USDC);

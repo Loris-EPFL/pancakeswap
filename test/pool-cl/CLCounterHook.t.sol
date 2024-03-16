@@ -13,6 +13,8 @@ import {CLPoolParametersHelper} from "@pancakeswap/v4-core/src/pool-cl/libraries
 import {PoolIdLibrary} from "@pancakeswap/v4-core/src/types/PoolId.sol";
 import {ICLSwapRouterBase} from "@pancakeswap/v4-periphery/src/pool-cl/interfaces/ICLSwapRouterBase.sol";
 import { console2 } from "forge-std/console2.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
 
 contract CLCounterHookTest is Test, CLTestUtils {
     using PoolIdLibrary for PoolKey;
@@ -49,8 +51,8 @@ contract CLCounterHookTest is Test, CLTestUtils {
         //MockERC20(Currency.unwrap(currency0)).mint(address(this), 1 ether);
         //MockERC20(Currency.unwrap(currency1)).mint(address(this), 1 ether);
 
-        _mintTokens(2 ether);
-        addLiquidity(key, 1 ether, 1 ether, -60, 60);
+        _mintTokens(10e18);
+        addLiquidity(key, 10 , 10 , -60, 60);
 
         assertEq(counterHook.beforeAddLiquidityCount(key.toId()), 1);
         assertEq(counterHook.afterAddLiquidityCount(key.toId()), 1);
@@ -59,12 +61,16 @@ contract CLCounterHookTest is Test, CLTestUtils {
     //helper function to mint tokens
     function _mintTokens(uint256 amount) internal{
        
-        address hypARB = 0xC4ed0A9Ea70d5bCC69f748547650d32cC219D882; //hyperlane USDC wrapper address on arbitrum / base
-        address USDC = 0x86E721b43d4ECFa71119Dd38c0f938A75Fdb57B3; //usdc address on arbitrum
+        address hypARB = 0x912CE59144191C1204E64559FE8253a0e49E6548; //hyperlane USDC wrapper address on arbitrum / base
+        address USDC = 0xaf88d065e77c8cC2239327C5EDb3A432268e5831; //usdc address on arbitrum
+        address cont = address(this);
         
         //mint Aeth and Ausdc by depositing into pool
-        deal(hypARB, address(this), amount);
-        deal(USDC, address(this), amount);
+        
+        vm.startPrank(0xe5988E0A077491660bADdb23d2444c5519195596);
+        MockERC20(hypARB).transfer(cont, amount);
+        MockERC20(USDC).transfer(cont, amount / 10e12); //adjust for USDC 6 decimals
+        vm.stopPrank();
 
     
     }
@@ -75,8 +81,12 @@ contract CLCounterHookTest is Test, CLTestUtils {
         
         //MockERC20(Currency.unwrap(currency0)).mint(address(this), 1 ether);
         //MockERC20(Currency.unwrap(currency1)).mint(address(this), 1 ether);
-        _mintTokens(2 ether);
-        addLiquidity(key, 1 ether, 1 ether, -60, 60);
+        _mintTokens(10e18);
+        addLiquidity(key, 100 , 100 , -60, 60);
+        console2.log("balance of tokenA of sender from test", IERC20(Currency.unwrap(key.currency0)).balanceOf(address(this)));
+        console2.log("balance of tokenB of sender from test", IERC20(Currency.unwrap(key.currency1)).balanceOf(address(this)));
+        console2.log("address of sender", address(this));
+        
 
         assertEq(counterHook.beforeSwapCount(key.toId()), 0);
         assertEq(counterHook.afterSwapCount(key.toId()), 0);
@@ -87,7 +97,7 @@ contract CLCounterHookTest is Test, CLTestUtils {
                 poolKey: key,
                 zeroForOne: true,
                 recipient: address(this),
-                amountIn: 0.1 ether,
+                amountIn: 10 wei ,
                 amountOutMinimum: 0,
                 sqrtPriceLimitX96: 0,
                 hookData: new bytes(0)

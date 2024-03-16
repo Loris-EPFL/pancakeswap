@@ -22,6 +22,12 @@ import {ICLHooks} from "@pancakeswap/v4-core/src/pool-cl/interfaces/ICLHooks.sol
 import {ICLPoolManager} from "@pancakeswap/v4-core/src/pool-cl/interfaces/ICLPoolManager.sol";
 import {CLPoolManager} from "@pancakeswap/v4-core/src/pool-cl/CLPoolManager.sol";
 import {IMailbox} from "@hyperlane/interfaces/IMailbox.sol";
+import {HypERC20} from "@hyperlane-contracts/typescript/token/contracts/HypERC20.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {Currency} from "@pancakeswap/v4-core/src/types/Currency.sol";
+import { console2 } from "forge-std/console2.sol";
+
+
 
 
 abstract contract CLBaseHook is ICLHooks {
@@ -98,7 +104,7 @@ abstract contract CLBaseHook is ICLHooks {
         revert HookNotImplemented();
     }
 
-    function afterInitialize(address, PoolKey calldata, uint160, int24, bytes calldata)
+    function afterInitialize(address, PoolKey calldata key, uint160, int24, bytes calldata)
         external
         virtual
         returns (bytes4)
@@ -152,13 +158,13 @@ abstract contract CLBaseHook is ICLHooks {
         revert HookNotImplemented();
     }
 
-    function afterSwap(address, PoolKey calldata, ICLPoolManager.SwapParams calldata, BalanceDelta, bytes calldata)
+    function afterSwap(address sender, PoolKey calldata, ICLPoolManager.SwapParams calldata, BalanceDelta delta, bytes calldata)
         external
         virtual
         returns (bytes4)
     {
+       revert HookNotImplemented();
         
-        revert HookNotImplemented();
     }
 
     function beforeDonate(address, PoolKey calldata, uint256, uint256, bytes calldata)
