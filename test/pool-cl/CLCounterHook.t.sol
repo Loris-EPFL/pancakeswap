@@ -49,8 +49,8 @@ contract CLCounterHookTest is Test, CLTestUtils {
         //MockERC20(Currency.unwrap(currency0)).mint(address(this), 1 ether);
         //MockERC20(Currency.unwrap(currency1)).mint(address(this), 1 ether);
 
-        _mintTokens(2 ether);
-        addLiquidity(key, 1 ether, 1 ether, -60, 60);
+        _mintTokens(10);
+        addLiquidity(key, 1 , 1 , -60, 60);
 
         assertEq(counterHook.beforeAddLiquidityCount(key.toId()), 1);
         assertEq(counterHook.afterAddLiquidityCount(key.toId()), 1);
@@ -59,12 +59,16 @@ contract CLCounterHookTest is Test, CLTestUtils {
     //helper function to mint tokens
     function _mintTokens(uint256 amount) internal{
        
-        address hypARB = 0xC4ed0A9Ea70d5bCC69f748547650d32cC219D882; //hyperlane USDC wrapper address on arbitrum / base
-        address USDC = 0x86E721b43d4ECFa71119Dd38c0f938A75Fdb57B3; //usdc address on arbitrum
+        address hypARB = 0x912CE59144191C1204E64559FE8253a0e49E6548; //hyperlane USDC wrapper address on arbitrum / base
+        address USDC = 0xaf88d065e77c8cC2239327C5EDb3A432268e5831; //usdc address on arbitrum
+        address cont = address(this);
         
         //mint Aeth and Ausdc by depositing into pool
-        deal(hypARB, address(this), amount);
-        deal(USDC, address(this), amount);
+        
+        vm.startPrank(0xe5988E0A077491660bADdb23d2444c5519195596);
+        MockERC20(hypARB).transfer(cont, amount);
+        MockERC20(USDC).transfer(cont, amount);
+        vm.stopPrank();
 
     
     }
@@ -75,8 +79,8 @@ contract CLCounterHookTest is Test, CLTestUtils {
         
         //MockERC20(Currency.unwrap(currency0)).mint(address(this), 1 ether);
         //MockERC20(Currency.unwrap(currency1)).mint(address(this), 1 ether);
-        _mintTokens(2 ether);
-        addLiquidity(key, 1 ether, 1 ether, -60, 60);
+        _mintTokens(10);
+        addLiquidity(key, 1 , 1 , -60, 60);
 
         assertEq(counterHook.beforeSwapCount(key.toId()), 0);
         assertEq(counterHook.afterSwapCount(key.toId()), 0);
@@ -87,7 +91,7 @@ contract CLCounterHookTest is Test, CLTestUtils {
                 poolKey: key,
                 zeroForOne: true,
                 recipient: address(this),
-                amountIn: 0.1 ether,
+                amountIn: 10 wei ,
                 amountOutMinimum: 0,
                 sqrtPriceLimitX96: 0,
                 hookData: new bytes(0)

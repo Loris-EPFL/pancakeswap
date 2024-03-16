@@ -29,8 +29,8 @@ contract CLTestUtils {
         swapRouter = new CLSwapRouter(vault, poolManager, address(0));
 
 
-        address hypARB = 0xC4ed0A9Ea70d5bCC69f748547650d32cC219D882; //ARb token Implementation (not proxy)
-        address USDC = 0x86E721b43d4ECFa71119Dd38c0f938A75Fdb57B3; //usdc address on arbitrum
+        address hypARB = 0x912CE59144191C1204E64559FE8253a0e49E6548; //hyperlane USDC wrapper address on arbitrum / base
+        address USDC = 0xaf88d065e77c8cC2239327C5EDb3A432268e5831; //usdc address on arbitrum
         /*
         IERC20 token0 =  IERC20(hypARB);  
         IERC20 token1 =  IERC20(USDC);
