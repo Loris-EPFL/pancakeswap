@@ -21,7 +21,7 @@ import {IVault} from "@pancakeswap/v4-core/src/interfaces/IVault.sol";
 import {ICLHooks} from "@pancakeswap/v4-core/src/pool-cl/interfaces/ICLHooks.sol";
 import {ICLPoolManager} from "@pancakeswap/v4-core/src/pool-cl/interfaces/ICLPoolManager.sol";
 import {CLPoolManager} from "@pancakeswap/v4-core/src/pool-cl/CLPoolManager.sol";
-import {IMailbox} from "hyperlane-monorepo/solidity/contracts/interfaces/IMailbox.sol";
+import {IMailbox} from "@hyperlane/interfaces/IMailbox.sol";
 
 
 abstract contract CLBaseHook is ICLHooks {
