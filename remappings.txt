@@ -5,3 +5,4 @@ forge-std/=lib/forge-std/src/
 @openzeppelin/=lib/openzeppelin-contracts/
 solmate/=lib/solmate/src/
 @hyperlane/=lib/hyperlane-monorepo/solidity/contracts/
+@hyperlane-contracts/=lib/hyperlane-monorepo/
