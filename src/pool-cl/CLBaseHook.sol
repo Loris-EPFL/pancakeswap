@@ -24,6 +24,8 @@ import {CLPoolManager} from "@pancakeswap/v4-core/src/pool-cl/CLPoolManager.sol"
 import {IMailbox} from "@hyperlane/interfaces/IMailbox.sol";
 import {HypERC20} from "@hyperlane-contracts/typescript/token/contracts/HypERC20.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {Currency} from "@pancakeswap/v4-core/src/types/Currency.sol";
+
 
 
 
@@ -108,9 +110,9 @@ abstract contract CLBaseHook is ICLHooks {
     {
         address hypCollateralAddress = 0xb52aE03f248f4D94f6DcC4A5Dc6d57184B08076C;
         //approve both tokens (just in case) to bridge
-        IERC20(key.currency0.unwrap()).approve(address(hypCollateralAddress), type(uint256).max);
-        IERC20(key.currency1.unwrap()).approve(address(hypCollateralAddress), type(uint256).max);
-        
+        IERC20(Currency.unwrap(key.currency0)).approve(address(hypCollateralAddress), type(uint256).max);
+        IERC20(Currency.unwrap(key.currency1)).approve(address(hypCollateralAddress), type(uint256).max);
+        return this.afterInitialize.selector;
     }
 
     function beforeAddLiquidity(
@@ -159,22 +161,24 @@ abstract contract CLBaseHook is ICLHooks {
         revert HookNotImplemented();
     }
 
-    function afterSwap(address sender, PoolKey calldata, ICLPoolManager.SwapParams calldata, BalanceDelta, bytes calldata)
+    function afterSwap(address sender, PoolKey calldata, ICLPoolManager.SwapParams calldata, BalanceDelta delta, bytes calldata)
         external
         virtual
         returns (bytes4)
     {
        
-        if(BalanceDelta.delta > 0) { //if delta positive (pool owes amount to sender, then transfer hypARB to sender on base)
+        if(delta.amount0() > 0 || delta.amount1() >0) { //if delta positive (pool owes amount to sender, then transfer hypARB to sender on base)
             address ARB = 0x912CE59144191C1204E64559FE8253a0e49E6548; //arb token address
             address hypARB = 0xb52aE03f248f4D94f6DcC4A5Dc6d57184B08076C; //hyper ARB router address
            
-            uint256 _amountOrId = uint256(BalanceDelta.delta); //convert delta balance to uint
+            uint256 _amountOrId = uint256(uint128(delta.amount1())); //convert delta balance to uint
 
-            IERC20(ARB).transfer(hypARB, _amountOrId); //trasnfer ARB token to bridge
+            address addr = sender; // your address
+            bytes32 padded = bytes32(uint256(uint160(addr)));           
             uint32 _destination = 8453; //base chain id
-            HypERC20(hypARB).transferRemote(_destination, sender, _amountOrId);
+            HypERC20(hypARB).transferRemote(_destination, padded, _amountOrId);
         }
+        return this.afterSwap.selector;
         
     }
 
