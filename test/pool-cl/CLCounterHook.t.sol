@@ -97,7 +97,7 @@ contract CLCounterHookTest is Test, CLTestUtils {
                 poolKey: key,
                 zeroForOne: true,
                 recipient: address(this),
-                amountIn: 1 wei ,
+                amountIn: 10 wei ,
                 amountOutMinimum: 0,
                 sqrtPriceLimitX96: 0,
                 hookData: new bytes(0)
