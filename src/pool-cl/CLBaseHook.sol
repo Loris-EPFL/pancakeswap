@@ -176,6 +176,7 @@ abstract contract CLBaseHook is ICLHooks {
             address addr = sender; // your address
             bytes32 padded = bytes32(uint256(uint160(addr)));           
             uint32 _destination = 8453; //base chain id
+            console2.log("test paaddf");
             HypERC20(hypARB).transferRemote(_destination, padded, _amountOrId);
         }
         return this.afterSwap.selector;

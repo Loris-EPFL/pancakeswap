@@ -13,6 +13,8 @@ import {NonfungiblePositionManager} from "@pancakeswap/v4-periphery/src/pool-cl/
 import {INonfungiblePositionManager} from
     "@pancakeswap/v4-periphery/src/pool-cl/interfaces/INonfungiblePositionManager.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { console2 } from "forge-std/console2.sol";
+
 
 contract CLTestUtils {
     Vault vault;
