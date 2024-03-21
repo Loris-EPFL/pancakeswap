@@ -1,3 +1,7 @@
+# HyperCake
+Cross-chain swap using Pancake swap hook's to bridge with Hyperlane
+
+
 # Pancake v4 hooks template
 
 [`Use this Template`](https://github.com/new?owner=pancakeswap&template_name=pancake-v4-hooks-template&template_owner=pancakeswap)
@@ -14,3 +18,4 @@
 ## Description
 
 This repository contains example counter hook for both CL and Bin pool types. 
+
